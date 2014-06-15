@@ -1,0 +1,25 @@
+# Instead of avoid upload .class files
+# we avoid to upload the full build directory
+#*.class
+build/
+
+# Gedit temporary files
+*~
+
+# Personal configs directory (maybe this is only because of Netbeans, no idea)
+private/
+
+# Distribution directory
+dist/
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+# We need .jar files for dependencies!
+#*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
