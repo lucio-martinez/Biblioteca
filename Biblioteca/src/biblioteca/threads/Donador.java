@@ -21,6 +21,8 @@ package biblioteca.threads;
 import biblioteca.resources.Biblioteca;
 import biblioteca.models.Revista;
 import biblioteca.models.Libro;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,12 +45,12 @@ public class Donador extends Thread {
     }
 
 
-    void donarLibro(Libro l, Biblioteca b) {
+    void donarLibro(Libro l, Biblioteca b) throws InterruptedException {
         log("QUIERO DONAR LIBRO!");
         b.donacionRecibida(l);
     }
 
-    void donarRevista(Revista r, Biblioteca b) {
+    void donarRevista(Revista r, Biblioteca b) throws InterruptedException {
         log("QUIERO DONAR REVISTA!");
         b.donacionRecibida(r);
     }
@@ -57,15 +59,22 @@ public class Donador extends Thread {
     @Override
     public void run() {
 
-        donarLibro(new Libro("El fantasma de la UTN"), biblioteca);
-        donarLibro(new Libro("Metele TXT"), biblioteca);
-        donarLibro(new Libro("Entrega rapida"), biblioteca);
-        donarLibro(new Libro("Converti el TXT"), biblioteca);
+        try {
+            // Please, do not sue me to mention your book. I'm helping you!
 
-        donarRevista(new Revista("El fantasma de la UTN - THE REVIEW"), biblioteca);
-        donarRevista(new Revista("Metele TXT - THE REVIEW"), biblioteca);
-        donarRevista(new Revista("Entrega rapida - THE REVIEW"), biblioteca);
-        donarRevista(new Revista("Converti el TXT - THE REVIEW"), biblioteca);
+            donarLibro(new Libro("The Call of the Wild"), biblioteca);
+            donarLibro(new Libro("Immensee"), biblioteca);
+            donarLibro(new Libro("Lettres de mon moulin"), biblioteca);
+            donarLibro(new Libro("The Trojan Women"), biblioteca);
+
+            donarRevista(new Revista("Memories and portraits - THE REVIEW"), biblioteca);
+            donarRevista(new Revista("The Complete Novels of Jane Austen - THE REVIEW"), biblioteca);
+            donarRevista(new Revista("The Scholemaster - THE REVIEW"), biblioteca);
+            donarRevista(new Revista("Prayers and Meditations - THE REVIEW"), biblioteca);
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Donador.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

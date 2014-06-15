@@ -22,7 +22,6 @@ import biblioteca.models.Libro;
 import biblioteca.models.Revista;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
-//import java.util.ConcurrentHashMap;
 
 /**
  *
@@ -30,15 +29,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Biblioteca {
     // Colecciones
-    private ConcurrentHashMap<Integer, Libro> libros = new ConcurrentHashMap();
-    private ConcurrentHashMap<Integer, Revista> revistas = new ConcurrentHashMap();
+    private final ConcurrentHashMap<Integer, Libro> libros = new ConcurrentHashMap<Integer, Libro>();
+    private final ConcurrentHashMap<Integer, Revista> revistas = new ConcurrentHashMap<Integer, Revista>();
     // Cantidad maxima de elementos almacenables en la biblioteca
     private final static int MAX_STOCK_LIBROS = 4;
     private final static int MAX_STOCK_REVISTAS = 4;
     // Bloques para sincronización granularizada
     private final Object bloquearLibros = new Object();
     private final Object bloquearRevistas = new Object();
-
+    // Directiva para mostrar eventos
     private static final boolean NDEBUG = true;
 
 
@@ -46,6 +45,7 @@ public class Biblioteca {
         if (NDEBUG)
             System.out.println(message);
     }
+
 
     // Imprime en salida los objetos utilizando su método toString
     private void imprimir(Enumeration e) {
@@ -73,17 +73,14 @@ public class Biblioteca {
     // ** LIBROS ** //
     // ************ //
 
-    public Libro prestarLibro(int id) {
+    public Libro prestarLibro(int id) throws InterruptedException {
         synchronized(bloquearLibros) {
 
             log("Entro gente a la biblioteca de Libros...");
 
             while(stockLibros() == 0 || libros.get(id) == null){
-                try{
-                    log("Pero el Libro deseado no esta...");
-                    bloquearLibros.wait();
-                }
-                catch ( InterruptedException e){}
+                log("Pero el Libro deseado no esta...");
+                bloquearLibros.wait();
             }
 
             Libro libro = libros.remove(id);
@@ -95,14 +92,13 @@ public class Biblioteca {
         } // END synchronized
     }
 
-    public void devolverLibro(Libro l) {
+
+    public void devolverLibro(Libro l) throws InterruptedException {
         synchronized(bloquearLibros) {
+
             while(stockLibros() == MAX_STOCK_LIBROS) {
-                try {
-                    log("No se puede devolver el Libro por falta de espacio...");
-                    bloquearLibros.wait();
-                }
-                catch ( InterruptedException e){}
+                log("No se puede devolver el Libro por falta de espacio...");
+                bloquearLibros.wait();
             }
 
             libros.put(l.getIdLibro(), l);
@@ -113,15 +109,14 @@ public class Biblioteca {
         }
     }
 
-    public void donacionRecibida(Libro l) {
+    public void donacionRecibida(Libro l) throws InterruptedException {
         synchronized(bloquearLibros) {
+
             while (stockLibros() == MAX_STOCK_LIBROS) {
-                try{
-                    log("La estanteria de Libros esta llena para recibir donaciones ¬¬");
-                    bloquearLibros.wait();
-                }
-                catch ( InterruptedException e){}
+                log("La estanteria de Libros esta llena para recibir donaciones ¬¬");
+                bloquearLibros.wait();
             }
+
             log("DONACION RECIBIDA!!! \\o/");
             devolverLibro(l);
         }
@@ -144,25 +139,14 @@ public class Biblioteca {
     // ** REVISTAS **//
     // ************* //
 
-    public Revista prestarRevista(int id) {
+    public Revista prestarRevista(int id) throws InterruptedException {
         synchronized(bloquearRevistas) {
 
             log("Entro gente a la biblioteca de Revistas...");
 
-            while(stockRevistas() == 0) {
-                try{
-                    log("Pero no hay revistas en la estanteria...");
-                    bloquearRevistas.wait();
-                }
-                catch ( InterruptedException e){}
-            }
-
-            while(revistas.get(id) == null){
-                try{
-                    log("Pero la Revista no esta...");
-                    bloquearRevistas.wait();
-                }
-                catch ( InterruptedException e){}
+            while(stockRevistas() == 0 || revistas.get(id) == null){
+                log("Pero la Revista no esta...");
+                bloquearRevistas.wait();
             }
 
             log("Encontro su Revista...");
@@ -174,31 +158,31 @@ public class Biblioteca {
             return revista;
         } // END synchronized
     }
+    
 
-    public void devolverRevista(Revista r) {
+    public void devolverRevista(Revista r) throws InterruptedException {
         synchronized(bloquearRevistas) {
+
             while(stockRevistas() == MAX_STOCK_REVISTAS) {
-                try {
-                    log("No se puede devolver la Revista...");
-                    bloquearRevistas.wait();
-                }
-                catch ( InterruptedException e){}
+                log("No se puede devolver la Revista...");
+                bloquearRevistas.wait();
             }
+
             log("Insertada la Revista: " + r.getTitulo());
             revistas.put(r.getIdRevista(), r);
             bloquearRevistas.notifyAll();
         }
     }
 
-    public void donacionRecibida(Revista r) {
+
+    public void donacionRecibida(Revista r) throws InterruptedException {
         synchronized(bloquearRevistas) {
+
             while (stockRevistas() == MAX_STOCK_REVISTAS) {
-                try{
-                    log("Pero la estanteria de Revistas esta llena (nos estan cachando ¬¬)...");
-                    bloquearRevistas.wait();
-                }
-                catch ( InterruptedException e){}
+                log("Pero la estanteria de Revistas esta llena (nos estan cachando ¬¬)...");
+                bloquearRevistas.wait();
             }
+
             log("DONACION RECIBIDA!!! \\o/");
             devolverRevista(r);
         }

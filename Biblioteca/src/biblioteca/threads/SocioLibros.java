@@ -51,13 +51,13 @@ public class SocioLibros extends Thread {
 
 
 
-    private Libro retirarLibro() {
+    private Libro retirarLibro() throws InterruptedException {
         int idLibro = this.idLibro.nextInt(MAX_ID_LIBRO) + 1;
         log("QUIERO EL LIBRO: " + idLibro);
         return biblioteca.prestarLibro(idLibro);
     }
 
-    private void devolverLibro(Libro libro) {
+    private void devolverLibro(Libro libro) throws InterruptedException {
         log("LIBRO A DEVOLVER: " + libro.getIdLibro());
         biblioteca.devolverLibro(libro);
     }

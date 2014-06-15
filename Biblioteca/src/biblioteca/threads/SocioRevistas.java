@@ -50,13 +50,13 @@ public class SocioRevistas extends Thread {
 
 
 
-    private Revista retirarRevista() {
+    private Revista retirarRevista() throws InterruptedException {
         int idRevista = this.idRevista.nextInt(MAX_ID_LIBRO) + 1;
         log("QUIERO LA REVISTA: " + idRevista);
         return biblioteca.prestarRevista(idRevista);
     }
 
-    private void devolverRevista(Revista r) {
+    private void devolverRevista(Revista r) throws InterruptedException {
         log("REVISTA A DEVOLVER: " + r.getIdRevista());
         biblioteca.devolverRevista(r);
     }
@@ -64,6 +64,7 @@ public class SocioRevistas extends Thread {
 
     @Override
     public void run(){
+
         try {
 
             sleep(tiempo.nextInt(MS_SLEEP));
@@ -75,6 +76,7 @@ public class SocioRevistas extends Thread {
         } catch (InterruptedException ex) {
             Logger.getLogger(SocioRevistas.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
 }
