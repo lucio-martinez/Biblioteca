@@ -17,10 +17,10 @@
 
 package biblioteca;
 
-import biblioteca.resources.Biblioteca;
-import biblioteca.threads.Donador;
-import biblioteca.threads.SocioLibros;
-import biblioteca.threads.SocioRevistas;
+import biblioteca.recursos.Biblioteca;
+import biblioteca.hilos.Donador;
+import biblioteca.hilos.SocioLibros;
+import biblioteca.hilos.SocioRevistas;
 
 /**
  * <p>Aplicación que genera una biblioteca virtual
@@ -60,13 +60,13 @@ public class Main {
         // libros.devolverLibro(a3);
         // libros.devolverLibro(a4);
 
-        new SocioLibros(biblioteca).start();
-        new SocioLibros(biblioteca).start();
+        new Thread(new SocioLibros(biblioteca)).start();
+        new Thread(new SocioLibros(biblioteca)).start();
 
-        new SocioRevistas(biblioteca).start();
-        new SocioRevistas(biblioteca).start();
+        new Thread(new SocioRevistas(biblioteca)).start();
+        new Thread(new SocioRevistas(biblioteca)).start();
 
-        new Donador(biblioteca).start();
+        new Thread(new Donador(biblioteca)).start();
     }
 
 }
